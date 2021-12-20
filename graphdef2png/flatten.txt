@@ -1,0 +1,68 @@
+node {                                                                                 
+  name: "Placeholder"
+  op: "Placeholder" 
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    } 
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+        dim {
+          size: -1
+        }
+        dim {
+          size: 28
+        }
+        dim {
+          size: 28
+        }
+      }
+    }
+  }
+}
+node {
+  name: "flatten_11/Const"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 2
+          }
+        }
+        tensor_content: "\377\377\377\377\020\003\000\000"
+      }
+    }
+  }
+}
+node {
+  name: "flatten_11/Reshape"
+  op: "Reshape"
+  input: "Placeholder"
+  input: "flatten_11/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tshape"
+    value {
+      type: DT_INT32
+    }
+  }
+}
