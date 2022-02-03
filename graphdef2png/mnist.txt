@@ -1,0 +1,3624 @@
+node {
+  name: "iterator"
+  op: "Placeholder"
+  attr {
+    key: "_user_specified_name"
+    value {
+      s: "iterator"
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "iterator_1"
+  op: "Placeholder"
+  attr {
+    key: "_user_specified_name"
+    value {
+      s: "iterator"
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_VARIANT
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "IteratorGetNext"
+  op: "IteratorGetNext"
+  input: "iterator"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@iterator"
+      }
+    }
+  }
+  attr {
+    key: "output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 32
+          }
+          dim {
+            size: 28
+          }
+          dim {
+            size: 28
+          }
+        }
+        shape {
+          dim {
+            size: 32
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "output_types"
+    value {
+      list {
+        type: DT_FLOAT
+        type: DT_UINT8
+      }
+    }
+  }
+}
+node {
+  name: "ExpandDims/dim"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: -1
+      }
+    }
+  }
+}
+node {
+  name: "ExpandDims"
+  op: "ExpandDims"
+  input: "IteratorGetNext:1"
+  input: "ExpandDims/dim"
+  attr {
+    key: "T"
+    value {
+      type: DT_UINT8
+    }
+  }
+  attr {
+    key: "Tdim"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "sequential_4/flatten_4/Const"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 2
+          }
+        }
+        tensor_content: "\377\377\377\377\020\003\000\000"
+      }
+    }
+  }
+}
+node {
+  name: "sequential_4/flatten_4/Reshape"
+  op: "Reshape"
+  input: "IteratorGetNext"
+  input: "sequential_4/flatten_4/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tshape"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_8/MatMul/ReadVariableOp/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_8/MatMul/ReadVariableOp"
+  op: "ReadVariableOp"
+  input: "sequential_4/dense_8/MatMul/ReadVariableOp/resource"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_8/MatMul"
+  op: "MatMul"
+  input: "sequential_4/flatten_4/Reshape"
+  input: "sequential_4/dense_8/MatMul/ReadVariableOp"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "transpose_a"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "transpose_b"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_8/BiasAdd/ReadVariableOp/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_8/BiasAdd/ReadVariableOp"
+  op: "ReadVariableOp"
+  input: "sequential_4/dense_8/BiasAdd/ReadVariableOp/resource"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_8/BiasAdd"
+  op: "BiasAdd"
+  input: "sequential_4/dense_8/MatMul"
+  input: "sequential_4/dense_8/BiasAdd/ReadVariableOp"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_8/Relu"
+  op: "Relu"
+  input: "sequential_4/dense_8/BiasAdd"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "sequential_4/dropout_4/dropout/Const"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 1.25
+      }
+    }
+  }
+}
+node {
+  name: "sequential_4/dropout_4/dropout/Mul"
+  op: "Mul"
+  input: "sequential_4/dense_8/Relu"
+  input: "sequential_4/dropout_4/dropout/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "sequential_4/dropout_4/dropout/Shape"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 2
+          }
+        }
+        tensor_content: " \000\000\000\200\000\000\000"
+      }
+    }
+  }
+}
+node {
+  name: "sequential_4/dropout_4/dropout/random_uniform/RandomUniform"
+  op: "RandomUniform"
+  input: "sequential_4/dropout_4/dropout/Shape"
+  attr {
+    key: "T"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "seed"
+    value {
+      i: 0
+    }
+  }
+  attr {
+    key: "seed2"
+    value {
+      i: 0
+    }
+  }
+}
+node {
+  name: "sequential_4/dropout_4/dropout/GreaterEqual/y"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.20000000298023224
+      }
+    }
+  }
+}
+node {
+  name: "sequential_4/dropout_4/dropout/GreaterEqual"
+  op: "GreaterEqual"
+  input: "sequential_4/dropout_4/dropout/random_uniform/RandomUniform"
+  input: "sequential_4/dropout_4/dropout/GreaterEqual/y"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "sequential_4/dropout_4/dropout/Cast"
+  op: "Cast"
+  input: "sequential_4/dropout_4/dropout/GreaterEqual"
+  attr {
+    key: "DstT"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "SrcT"
+    value {
+      type: DT_BOOL
+    }
+  }
+  attr {
+    key: "Truncate"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "sequential_4/dropout_4/dropout/Mul_1"
+  op: "Mul"
+  input: "sequential_4/dropout_4/dropout/Mul"
+  input: "sequential_4/dropout_4/dropout/Cast"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_9/MatMul/ReadVariableOp/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_9/MatMul/ReadVariableOp"
+  op: "ReadVariableOp"
+  input: "sequential_4/dense_9/MatMul/ReadVariableOp/resource"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_9/MatMul"
+  op: "MatMul"
+  input: "sequential_4/dropout_4/dropout/Mul_1"
+  input: "sequential_4/dense_9/MatMul/ReadVariableOp"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "transpose_a"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "transpose_b"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_9/BiasAdd/ReadVariableOp/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_9/BiasAdd/ReadVariableOp"
+  op: "ReadVariableOp"
+  input: "sequential_4/dense_9/BiasAdd/ReadVariableOp/resource"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_9/BiasAdd"
+  op: "BiasAdd"
+  input: "sequential_4/dense_9/MatMul"
+  input: "sequential_4/dense_9/BiasAdd/ReadVariableOp"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "sequential_4/dense_9/Softmax"
+  op: "Softmax"
+  input: "sequential_4/dense_9/BiasAdd"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/Cast"
+  op: "Cast"
+  input: "ExpandDims"
+  attr {
+    key: "DstT"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "SrcT"
+    value {
+      type: DT_UINT8
+    }
+  }
+  attr {
+    key: "Truncate"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/Cast_1"
+  op: "Cast"
+  input: "sparse_categorical_crossentropy/Cast"
+  attr {
+    key: "DstT"
+    value {
+      type: DT_INT64
+    }
+  }
+  attr {
+    key: "SrcT"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Truncate"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/Shape"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 2
+          }
+        }
+        tensor_content: " \000\000\000\n\000\000\000"
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/Reshape/shape"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: -1
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/Reshape"
+  op: "Reshape"
+  input: "sparse_categorical_crossentropy/Cast_1"
+  input: "sparse_categorical_crossentropy/Reshape/shape"
+  attr {
+    key: "T"
+    value {
+      type: DT_INT64
+    }
+  }
+  attr {
+    key: "Tshape"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/strided_slice/stack"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: -1
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/strided_slice/stack_1"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 0
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/strided_slice/stack_2"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 1
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/strided_slice"
+  op: "StridedSlice"
+  input: "sparse_categorical_crossentropy/Shape"
+  input: "sparse_categorical_crossentropy/strided_slice/stack"
+  input: "sparse_categorical_crossentropy/strided_slice/stack_1"
+  input: "sparse_categorical_crossentropy/strided_slice/stack_2"
+  attr {
+    key: "Index"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "T"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "begin_mask"
+    value {
+      i: 0
+    }
+  }
+  attr {
+    key: "ellipsis_mask"
+    value {
+      i: 0
+    }
+  }
+  attr {
+    key: "end_mask"
+    value {
+      i: 0
+    }
+  }
+  attr {
+    key: "new_axis_mask"
+    value {
+      i: 0
+    }
+  }
+  attr {
+    key: "shrink_axis_mask"
+    value {
+      i: 1
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/Reshape_1/shape/0"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: -1
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/Reshape_1/shape"
+  op: "Pack"
+  input: "sparse_categorical_crossentropy/Reshape_1/shape/0"
+  input: "sparse_categorical_crossentropy/strided_slice"
+  attr {
+    key: "N"
+    value {
+      i: 2
+    }
+  }
+  attr {
+    key: "T"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "axis"
+    value {
+      i: 0
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/Reshape_1"
+  op: "Reshape"
+  input: "sequential_4/dense_9/BiasAdd"
+  input: "sparse_categorical_crossentropy/Reshape_1/shape"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tshape"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/SparseSoftmaxCrossEntropyWithLogits/Shape"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 32
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits"
+  op: "SparseSoftmaxCrossEntropyWithLogits"
+  input: "sparse_categorical_crossentropy/Reshape_1"
+  input: "sparse_categorical_crossentropy/Reshape"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tlabels"
+    value {
+      type: DT_INT64
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/weighted_loss/Const"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 1.0
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/weighted_loss/Mul"
+  op: "Mul"
+  input: "sparse_categorical_crossentropy/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits"
+  input: "sparse_categorical_crossentropy/weighted_loss/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/weighted_loss/Const_1"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 0
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/weighted_loss/Sum"
+  op: "Sum"
+  input: "sparse_categorical_crossentropy/weighted_loss/Mul"
+  input: "sparse_categorical_crossentropy/weighted_loss/Const_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tidx"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "keep_dims"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/weighted_loss/num_elements"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: 32
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/weighted_loss/num_elements/Cast"
+  op: "Cast"
+  input: "sparse_categorical_crossentropy/weighted_loss/num_elements"
+  attr {
+    key: "DstT"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "SrcT"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "Truncate"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/weighted_loss/Rank"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: 0
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/weighted_loss/range/start"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: 0
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/weighted_loss/range/delta"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: 1
+      }
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/weighted_loss/range"
+  op: "Range"
+  input: "sparse_categorical_crossentropy/weighted_loss/range/start"
+  input: "sparse_categorical_crossentropy/weighted_loss/Rank"
+  input: "sparse_categorical_crossentropy/weighted_loss/range/delta"
+  attr {
+    key: "Tidx"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/weighted_loss/Sum_1"
+  op: "Sum"
+  input: "sparse_categorical_crossentropy/weighted_loss/Sum"
+  input: "sparse_categorical_crossentropy/weighted_loss/range"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tidx"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "keep_dims"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "sparse_categorical_crossentropy/weighted_loss/value"
+  op: "DivNoNan"
+  input: "sparse_categorical_crossentropy/weighted_loss/Sum_1"
+  input: "sparse_categorical_crossentropy/weighted_loss/num_elements/Cast"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Shape"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 2
+          }
+        }
+        tensor_content: " \000\000\000\001\000\000\000"
+      }
+    }
+  }
+}
+node {
+  name: "strided_slice/stack"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 0
+      }
+    }
+  }
+}
+node {
+  name: "strided_slice/stack_1"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 1
+      }
+    }
+  }
+}
+node {
+  name: "strided_slice/stack_2"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 1
+      }
+    }
+  }
+}
+node {
+  name: "strided_slice"
+  op: "StridedSlice"
+  input: "Shape"
+  input: "strided_slice/stack"
+  input: "strided_slice/stack_1"
+  input: "strided_slice/stack_2"
+  attr {
+    key: "Index"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "T"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "begin_mask"
+    value {
+      i: 0
+    }
+  }
+  attr {
+    key: "ellipsis_mask"
+    value {
+      i: 0
+    }
+  }
+  attr {
+    key: "end_mask"
+    value {
+      i: 0
+    }
+  }
+  attr {
+    key: "new_axis_mask"
+    value {
+      i: 0
+    }
+  }
+  attr {
+    key: "shrink_axis_mask"
+    value {
+      i: 1
+    }
+  }
+}
+node {
+  name: "Cast"
+  op: "Cast"
+  input: "strided_slice"
+  attr {
+    key: "DstT"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "SrcT"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "Truncate"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "Mul"
+  op: "Mul"
+  input: "sparse_categorical_crossentropy/weighted_loss/value"
+  input: "Cast"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Rank"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: 0
+      }
+    }
+  }
+}
+node {
+  name: "range/start"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: 0
+      }
+    }
+  }
+}
+node {
+  name: "range/delta"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: 1
+      }
+    }
+  }
+}
+node {
+  name: "range"
+  op: "Range"
+  input: "range/start"
+  input: "Rank"
+  input: "range/delta"
+  attr {
+    key: "Tidx"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "Sum"
+  op: "Sum"
+  input: "Mul"
+  input: "range"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tidx"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "keep_dims"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "AssignAddVariableOp/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "AssignAddVariableOp"
+  op: "AssignAddVariableOp"
+  input: "AssignAddVariableOp/resource"
+  input: "Sum"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Rank_1"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: 0
+      }
+    }
+  }
+}
+node {
+  name: "range_1/start"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: 0
+      }
+    }
+  }
+}
+node {
+  name: "range_1/delta"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: 1
+      }
+    }
+  }
+}
+node {
+  name: "range_1"
+  op: "Range"
+  input: "range_1/start"
+  input: "Rank_1"
+  input: "range_1/delta"
+  attr {
+    key: "Tidx"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "Sum_1"
+  op: "Sum"
+  input: "Cast"
+  input: "range_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tidx"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "keep_dims"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "AssignAddVariableOp_1/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "AssignAddVariableOp_1"
+  op: "AssignAddVariableOp"
+  input: "AssignAddVariableOp_1/resource"
+  input: "Sum_1"
+  input: "^AssignAddVariableOp"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/gradients/ones"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 1.0
+      }
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Shape"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Shape_1"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/BroadcastGradientArgs"
+  op: "BroadcastGradientArgs"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Shape"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Shape_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/div_no_nan"
+  op: "DivNoNan"
+  input: "Adam/gradients/ones"
+  input: "sparse_categorical_crossentropy/weighted_loss/num_elements/Cast"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Sum"
+  op: "Sum"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/div_no_nan"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/BroadcastGradientArgs"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tidx"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "keep_dims"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Reshape"
+  op: "Reshape"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Sum"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Shape"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tshape"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Neg"
+  op: "Neg"
+  input: "sparse_categorical_crossentropy/weighted_loss/Sum_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/div_no_nan_1"
+  op: "DivNoNan"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Neg"
+  input: "sparse_categorical_crossentropy/weighted_loss/num_elements/Cast"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/div_no_nan_2"
+  op: "DivNoNan"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/div_no_nan_1"
+  input: "sparse_categorical_crossentropy/weighted_loss/num_elements/Cast"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/mul"
+  op: "Mul"
+  input: "Adam/gradients/ones"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/div_no_nan_2"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Sum_1"
+  op: "Sum"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/mul"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/BroadcastGradientArgs:1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tidx"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "keep_dims"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Reshape_1"
+  op: "Reshape"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Sum_1"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Shape_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tshape"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Reshape/shape"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Reshape/shape_1"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Reshape"
+  op: "Reshape"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/value/Reshape"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Reshape/shape_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tshape"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Const"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Tile"
+  op: "Tile"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Reshape"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tmultiples"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Reshape_1/shape"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 1
+      }
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Reshape_1"
+  op: "Reshape"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Tile"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Reshape_1/shape"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tshape"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Const_1"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 32
+      }
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Tile_1"
+  op: "Tile"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Reshape_1"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Const_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tmultiples"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Mul"
+  op: "Mul"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Tile_1"
+  input: "sparse_categorical_crossentropy/weighted_loss/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/SparseSoftmaxCrossEntropyWithLogits/ExpandDims/dim"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: -1
+      }
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/SparseSoftmaxCrossEntropyWithLogits/ExpandDims"
+  op: "ExpandDims"
+  input: "gradient_tape/sparse_categorical_crossentropy/weighted_loss/Mul"
+  input: "gradient_tape/sparse_categorical_crossentropy/SparseSoftmaxCrossEntropyWithLogits/ExpandDims/dim"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tdim"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/SparseSoftmaxCrossEntropyWithLogits/mul"
+  op: "Mul"
+  input: "gradient_tape/sparse_categorical_crossentropy/SparseSoftmaxCrossEntropyWithLogits/ExpandDims"
+  input: "sparse_categorical_crossentropy/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits:1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/Shape"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 2
+          }
+        }
+        tensor_content: " \000\000\000\n\000\000\000"
+      }
+    }
+  }
+}
+node {
+  name: "gradient_tape/sparse_categorical_crossentropy/Reshape"
+  op: "Reshape"
+  input: "gradient_tape/sparse_categorical_crossentropy/SparseSoftmaxCrossEntropyWithLogits/mul"
+  input: "gradient_tape/sparse_categorical_crossentropy/Shape"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tshape"
+    value {
+      type: DT_INT32
+    }
+  }
+}
+node {
+  name: "gradient_tape/sequential_4/dense_9/BiasAdd/BiasAddGrad"
+  op: "BiasAddGrad"
+  input: "gradient_tape/sparse_categorical_crossentropy/Reshape"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "gradient_tape/sequential_4/dense_9/MatMul"
+  op: "MatMul"
+  input: "gradient_tape/sparse_categorical_crossentropy/Reshape"
+  input: "sequential_4/dense_9/MatMul/ReadVariableOp"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "transpose_a"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "transpose_b"
+    value {
+      b: true
+    }
+  }
+}
+node {
+  name: "gradient_tape/sequential_4/dense_9/MatMul_1"
+  op: "MatMul"
+  input: "sequential_4/dropout_4/dropout/Mul_1"
+  input: "gradient_tape/sparse_categorical_crossentropy/Reshape"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "transpose_a"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "transpose_b"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "gradient_tape/sequential_4/dropout_4/dropout/Mul"
+  op: "Mul"
+  input: "gradient_tape/sequential_4/dense_9/MatMul"
+  input: "sequential_4/dropout_4/dropout/Cast"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "gradient_tape/sequential_4/dropout_4/dropout/Mul_1"
+  op: "Mul"
+  input: "gradient_tape/sequential_4/dense_9/MatMul"
+  input: "sequential_4/dropout_4/dropout/Mul"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "gradient_tape/sequential_4/dropout_4/dropout/Mul_2"
+  op: "Mul"
+  input: "gradient_tape/sequential_4/dropout_4/dropout/Mul"
+  input: "sequential_4/dropout_4/dropout/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "gradient_tape/sequential_4/dense_8/ReluGrad"
+  op: "ReluGrad"
+  input: "gradient_tape/sequential_4/dropout_4/dropout/Mul_2"
+  input: "sequential_4/dense_8/Relu"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "gradient_tape/sequential_4/dense_8/BiasAdd/BiasAddGrad"
+  op: "BiasAddGrad"
+  input: "gradient_tape/sequential_4/dense_8/ReluGrad"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "gradient_tape/sequential_4/dense_8/MatMul"
+  op: "MatMul"
+  input: "sequential_4/flatten_4/Reshape"
+  input: "gradient_tape/sequential_4/dense_8/ReluGrad"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "transpose_a"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "transpose_b"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "Adam/Cast/ReadVariableOp/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "Adam/Cast/ReadVariableOp"
+  op: "ReadVariableOp"
+  input: "Adam/Cast/ReadVariableOp/resource"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/Identity"
+  op: "Identity"
+  input: "Adam/Cast/ReadVariableOp"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/ReadVariableOp/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "Adam/ReadVariableOp"
+  op: "ReadVariableOp"
+  input: "Adam/ReadVariableOp/resource"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT64
+    }
+  }
+}
+node {
+  name: "Adam/add/y"
+  op: "Const"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT64
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT64
+        tensor_shape {
+        }
+        int64_val: 1
+      }
+    }
+  }
+}
+node {
+  name: "Adam/add"
+  op: "AddV2"
+  input: "Adam/ReadVariableOp"
+  input: "Adam/add/y"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_INT64
+    }
+  }
+}
+node {
+  name: "Adam/Cast_1"
+  op: "Cast"
+  input: "Adam/add"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "DstT"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "SrcT"
+    value {
+      type: DT_INT64
+    }
+  }
+  attr {
+    key: "Truncate"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "Adam/Cast_2/ReadVariableOp/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "Adam/Cast_2/ReadVariableOp"
+  op: "ReadVariableOp"
+  input: "Adam/Cast_2/ReadVariableOp/resource"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/Identity_1"
+  op: "Identity"
+  input: "Adam/Cast_2/ReadVariableOp"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/Cast_3/ReadVariableOp/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "Adam/Cast_3/ReadVariableOp"
+  op: "ReadVariableOp"
+  input: "Adam/Cast_3/ReadVariableOp/resource"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/Identity_2"
+  op: "Identity"
+  input: "Adam/Cast_3/ReadVariableOp"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/Pow"
+  op: "Pow"
+  input: "Adam/Identity_1"
+  input: "Adam/Cast_1"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/Pow_1"
+  op: "Pow"
+  input: "Adam/Identity_2"
+  input: "Adam/Cast_1"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/sub/x"
+  op: "Const"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 1.0
+      }
+    }
+  }
+}
+node {
+  name: "Adam/sub"
+  op: "Sub"
+  input: "Adam/sub/x"
+  input: "Adam/Pow_1"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/Sqrt"
+  op: "Sqrt"
+  input: "Adam/sub"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/sub_1/x"
+  op: "Const"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 1.0
+      }
+    }
+  }
+}
+node {
+  name: "Adam/sub_1"
+  op: "Sub"
+  input: "Adam/sub_1/x"
+  input: "Adam/Pow"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/truediv"
+  op: "RealDiv"
+  input: "Adam/Sqrt"
+  input: "Adam/sub_1"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/mul"
+  op: "Mul"
+  input: "Adam/Identity"
+  input: "Adam/truediv"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/Const"
+  op: "Const"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 1.0000000116860974e-07
+      }
+    }
+  }
+}
+node {
+  name: "Adam/sub_2/x"
+  op: "Const"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 1.0
+      }
+    }
+  }
+}
+node {
+  name: "Adam/sub_2"
+  op: "Sub"
+  input: "Adam/sub_2/x"
+  input: "Adam/Identity_1"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/sub_3/x"
+  op: "Const"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 1.0
+      }
+    }
+  }
+}
+node {
+  name: "Adam/sub_3"
+  op: "Sub"
+  input: "Adam/sub_3/x"
+  input: "Adam/Identity_2"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Adam/Adam/update/ResourceApplyAdam/m"
+  op: "Placeholder"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@sequential_4/dense_8/MatMul/ReadVariableOp/resource"
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "Adam/Adam/update/ResourceApplyAdam/v"
+  op: "Placeholder"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@sequential_4/dense_8/MatMul/ReadVariableOp/resource"
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "Adam/Adam/update/ResourceApplyAdam"
+  op: "ResourceApplyAdam"
+  input: "sequential_4/dense_8/MatMul/ReadVariableOp/resource"
+  input: "Adam/Adam/update/ResourceApplyAdam/m"
+  input: "Adam/Adam/update/ResourceApplyAdam/v"
+  input: "Adam/Pow"
+  input: "Adam/Pow_1"
+  input: "Adam/Identity"
+  input: "Adam/Identity_1"
+  input: "Adam/Identity_2"
+  input: "Adam/Const"
+  input: "gradient_tape/sequential_4/dense_8/MatMul"
+  input: "^sequential_4/dense_8/MatMul/ReadVariableOp"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@sequential_4/dense_8/MatMul/ReadVariableOp/resource"
+      }
+    }
+  }
+  attr {
+    key: "use_locking"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "use_nesterov"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "Adam/Adam/update_1/ResourceApplyAdam/m"
+  op: "Placeholder"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@sequential_4/dense_8/BiasAdd/ReadVariableOp/resource"
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "Adam/Adam/update_1/ResourceApplyAdam/v"
+  op: "Placeholder"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@sequential_4/dense_8/BiasAdd/ReadVariableOp/resource"
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "Adam/Adam/update_1/ResourceApplyAdam"
+  op: "ResourceApplyAdam"
+  input: "sequential_4/dense_8/BiasAdd/ReadVariableOp/resource"
+  input: "Adam/Adam/update_1/ResourceApplyAdam/m"
+  input: "Adam/Adam/update_1/ResourceApplyAdam/v"
+  input: "Adam/Pow"
+  input: "Adam/Pow_1"
+  input: "Adam/Identity"
+  input: "Adam/Identity_1"
+  input: "Adam/Identity_2"
+  input: "Adam/Const"
+  input: "gradient_tape/sequential_4/dense_8/BiasAdd/BiasAddGrad"
+  input: "^sequential_4/dense_8/BiasAdd/ReadVariableOp"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@sequential_4/dense_8/BiasAdd/ReadVariableOp/resource"
+      }
+    }
+  }
+  attr {
+    key: "use_locking"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "use_nesterov"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "Adam/Adam/update_2/ResourceApplyAdam/m"
+  op: "Placeholder"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@sequential_4/dense_9/MatMul/ReadVariableOp/resource"
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "Adam/Adam/update_2/ResourceApplyAdam/v"
+  op: "Placeholder"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@sequential_4/dense_9/MatMul/ReadVariableOp/resource"
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "Adam/Adam/update_2/ResourceApplyAdam"
+  op: "ResourceApplyAdam"
+  input: "sequential_4/dense_9/MatMul/ReadVariableOp/resource"
+  input: "Adam/Adam/update_2/ResourceApplyAdam/m"
+  input: "Adam/Adam/update_2/ResourceApplyAdam/v"
+  input: "Adam/Pow"
+  input: "Adam/Pow_1"
+  input: "Adam/Identity"
+  input: "Adam/Identity_1"
+  input: "Adam/Identity_2"
+  input: "Adam/Const"
+  input: "gradient_tape/sequential_4/dense_9/MatMul_1"
+  input: "^sequential_4/dense_9/MatMul/ReadVariableOp"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@sequential_4/dense_9/MatMul/ReadVariableOp/resource"
+      }
+    }
+  }
+  attr {
+    key: "use_locking"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "use_nesterov"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "Adam/Adam/update_3/ResourceApplyAdam/m"
+  op: "Placeholder"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@sequential_4/dense_9/BiasAdd/ReadVariableOp/resource"
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "Adam/Adam/update_3/ResourceApplyAdam/v"
+  op: "Placeholder"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@sequential_4/dense_9/BiasAdd/ReadVariableOp/resource"
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "Adam/Adam/update_3/ResourceApplyAdam"
+  op: "ResourceApplyAdam"
+  input: "sequential_4/dense_9/BiasAdd/ReadVariableOp/resource"
+  input: "Adam/Adam/update_3/ResourceApplyAdam/m"
+  input: "Adam/Adam/update_3/ResourceApplyAdam/v"
+  input: "Adam/Pow"
+  input: "Adam/Pow_1"
+  input: "Adam/Identity"
+  input: "Adam/Identity_1"
+  input: "Adam/Identity_2"
+  input: "Adam/Const"
+  input: "gradient_tape/sequential_4/dense_9/BiasAdd/BiasAddGrad"
+  input: "^sequential_4/dense_9/BiasAdd/ReadVariableOp"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@sequential_4/dense_9/BiasAdd/ReadVariableOp/resource"
+      }
+    }
+  }
+  attr {
+    key: "use_locking"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "use_nesterov"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "Adam/Adam/group_deps"
+  op: "NoOp"
+  input: "^Adam/Adam/update/ResourceApplyAdam"
+  input: "^Adam/Adam/update_1/ResourceApplyAdam"
+  input: "^Adam/Adam/update_2/ResourceApplyAdam"
+  input: "^Adam/Adam/update_3/ResourceApplyAdam"
+  device: "/job:localhost/replica:0/task:0/device:GPU:0"
+}
+node {
+  name: "Adam/Adam/Const"
+  op: "Const"
+  input: "^Adam/Adam/group_deps"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT64
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT64
+        tensor_shape {
+        }
+        int64_val: 1
+      }
+    }
+  }
+}
+node {
+  name: "Adam/Adam/AssignAddVariableOp"
+  op: "AssignAddVariableOp"
+  input: "Adam/ReadVariableOp/resource"
+  input: "Adam/Adam/Const"
+  input: "^Adam/ReadVariableOp"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT64
+    }
+  }
+}
+node {
+  name: "Cast_1"
+  op: "Cast"
+  input: "ExpandDims"
+  attr {
+    key: "DstT"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "SrcT"
+    value {
+      type: DT_UINT8
+    }
+  }
+  attr {
+    key: "Truncate"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "Squeeze"
+  op: "Squeeze"
+  input: "Cast_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "squeeze_dims"
+    value {
+      list {
+        i: -1
+      }
+    }
+  }
+}
+node {
+  name: "ArgMax/dimension"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: -1
+      }
+    }
+  }
+}
+node {
+  name: "ArgMax"
+  op: "ArgMax"
+  input: "sequential_4/dense_9/Softmax"
+  input: "ArgMax/dimension"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tidx"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "output_type"
+    value {
+      type: DT_INT64
+    }
+  }
+}
+node {
+  name: "Cast_2"
+  op: "Cast"
+  input: "ArgMax"
+  attr {
+    key: "DstT"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "SrcT"
+    value {
+      type: DT_INT64
+    }
+  }
+  attr {
+    key: "Truncate"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "Equal"
+  op: "Equal"
+  input: "Squeeze"
+  input: "Cast_2"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "incompatible_shape_error"
+    value {
+      b: true
+    }
+  }
+}
+node {
+  name: "Cast_3"
+  op: "Cast"
+  input: "Equal"
+  attr {
+    key: "DstT"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "SrcT"
+    value {
+      type: DT_BOOL
+    }
+  }
+  attr {
+    key: "Truncate"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "Const"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 0
+      }
+    }
+  }
+}
+node {
+  name: "Sum_2"
+  op: "Sum"
+  input: "Cast_3"
+  input: "Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "Tidx"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "keep_dims"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "AssignAddVariableOp_2/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "AssignAddVariableOp_2"
+  op: "AssignAddVariableOp"
+  input: "AssignAddVariableOp_2/resource"
+  input: "Sum_2"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Size"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+        }
+        int_val: 32
+      }
+    }
+  }
+}
+node {
+  name: "Cast_4"
+  op: "Cast"
+  input: "Size"
+  attr {
+    key: "DstT"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "SrcT"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "Truncate"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "AssignAddVariableOp_3/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "AssignAddVariableOp_3"
+  op: "AssignAddVariableOp"
+  input: "AssignAddVariableOp_3/resource"
+  input: "Cast_4"
+  input: "^AssignAddVariableOp_2"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "div_no_nan/ReadVariableOp"
+  op: "ReadVariableOp"
+  input: "AssignAddVariableOp/resource"
+  input: "^AssignAddVariableOp"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "div_no_nan/ReadVariableOp_1"
+  op: "ReadVariableOp"
+  input: "AssignAddVariableOp_1/resource"
+  input: "^AssignAddVariableOp_1"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "div_no_nan"
+  op: "DivNoNan"
+  input: "div_no_nan/ReadVariableOp"
+  input: "div_no_nan/ReadVariableOp_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Identity"
+  op: "Identity"
+  input: "div_no_nan"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "div_no_nan_1/ReadVariableOp"
+  op: "ReadVariableOp"
+  input: "AssignAddVariableOp_2/resource"
+  input: "^AssignAddVariableOp_2"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "div_no_nan_1/ReadVariableOp_1"
+  op: "ReadVariableOp"
+  input: "AssignAddVariableOp_3/resource"
+  input: "^AssignAddVariableOp_3"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "div_no_nan_1"
+  op: "DivNoNan"
+  input: "div_no_nan_1/ReadVariableOp"
+  input: "div_no_nan_1/ReadVariableOp_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Identity_1"
+  op: "Identity"
+  input: "div_no_nan_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Const_1"
+  op: "Const"
+  input: "^Identity_1"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT64
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT64
+        tensor_shape {
+        }
+        int64_val: 1
+      }
+    }
+  }
+}
+node {
+  name: "AssignAddVariableOp_4/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "AssignAddVariableOp_4"
+  op: "AssignAddVariableOp"
+  input: "AssignAddVariableOp_4/resource"
+  input: "Const_1"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT64
+    }
+  }
+}
+node {
+  name: "batch_loss/write_summary/Const"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_BOOL
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_BOOL
+        tensor_shape {
+        }
+        bool_val: false
+      }
+    }
+  }
+}
+node {
+  name: "batch_accuracy/write_summary/Const"
+  op: "Const"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_BOOL
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_BOOL
+        tensor_shape {
+        }
+        bool_val: false
+      }
+    }
+  }
+}
+node {
+  name: "Identity_2"
+  op: "Identity"
+  input: "Identity_1"
+  input: "^NoOp"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "Identity_3"
+  op: "Identity"
+  input: "Identity"
+  input: "^NoOp"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "NoOp"
+  op: "NoOp"
+  input: "^Adam/Adam/AssignAddVariableOp"
+  input: "^Adam/Adam/update/ResourceApplyAdam"
+  input: "^Adam/Adam/update_1/ResourceApplyAdam"
+  input: "^Adam/Adam/update_2/ResourceApplyAdam"
+  input: "^Adam/Adam/update_3/ResourceApplyAdam"
+  input: "^Adam/Cast/ReadVariableOp"
+  input: "^Adam/Cast_2/ReadVariableOp"
+  input: "^Adam/Cast_3/ReadVariableOp"
+  input: "^Adam/ReadVariableOp"
+  input: "^AssignAddVariableOp"
+  input: "^AssignAddVariableOp_1"
+  input: "^AssignAddVariableOp_2"
+  input: "^AssignAddVariableOp_3"
+  input: "^AssignAddVariableOp_4"
+  input: "^IteratorGetNext"
+  input: "^div_no_nan/ReadVariableOp"
+  input: "^div_no_nan/ReadVariableOp_1"
+  input: "^div_no_nan_1/ReadVariableOp"
+  input: "^div_no_nan_1/ReadVariableOp_1"
+  input: "^sequential_4/dense_8/BiasAdd/ReadVariableOp"
+  input: "^sequential_4/dense_8/MatMul/ReadVariableOp"
+  input: "^sequential_4/dense_9/BiasAdd/ReadVariableOp"
+  input: "^sequential_4/dense_9/MatMul/ReadVariableOp"
+  attr {
+    key: "_acd_function_control_output"
+    value {
+      b: true
+    }
+  }
+}

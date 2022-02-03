@@ -1,0 +1,135 @@
+node {
+  name: "Placeholder"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+        dim {
+          size: -1
+        }
+        dim {
+          size: 784
+        }
+      }
+    }
+  }
+}
+node {
+  name: "dense_4/MatMul/ReadVariableOp/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "dense_4/MatMul/ReadVariableOp"
+  op: "ReadVariableOp"
+  input: "dense_4/MatMul/ReadVariableOp/resource"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "dense_4/MatMul"
+  op: "MatMul"
+  input: "Placeholder"
+  input: "dense_4/MatMul/ReadVariableOp"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "transpose_a"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "transpose_b"
+    value {
+      b: false
+    }
+  }
+}
+node {
+  name: "dense_4/BiasAdd/ReadVariableOp/resource"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_RESOURCE
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+      }
+    }
+  }
+}
+node {
+  name: "dense_4/BiasAdd/ReadVariableOp"
+  op: "ReadVariableOp"
+  input: "dense_4/BiasAdd/ReadVariableOp/resource"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "dense_4/BiasAdd"
+  op: "BiasAdd"
+  input: "dense_4/MatMul"
+  input: "dense_4/BiasAdd/ReadVariableOp"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "dense_4/Relu"
+  op: "Relu"
+  input: "dense_4/BiasAdd"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+versions {
+  producer: 808
+}

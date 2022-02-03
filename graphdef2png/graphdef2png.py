@@ -1,13 +1,14 @@
 import re
 import networkx as nx
 import matplotlib.pyplot as plt
+import pydot
 
 class Node:
     def __init__(self, name, inputs):
         self.name = name
         self.inputs = inputs
         self.children = 0
-    
+
     def __init__(self, node_lines):
         self.inputs = []
         self.name = None
@@ -27,6 +28,8 @@ class Node:
     def find_parent(self, node_lists):
         self.parent = []
         for t in self.inputs:
+            t = t.replace('^', '')
+            t = re.sub(r':[0-9]+', '', t)
             found = False
             for node in node_lists:
                 if t == node.name:
@@ -35,6 +38,7 @@ class Node:
                     node.children += 1
                     break
             if not found:
+                print(t,'ERROR')
                 self.parent.append(None)
 
 def build_graph(file_name):
@@ -57,12 +61,15 @@ def build_graph(file_name):
     edge_list = []
     for node in node_list:
         for p in node.parent:
+            if p == None:
+                print(node.name)
+                continue
             edge_list.append((p.name, node.name))
     return node_list, edge_list
 
 def draw_graph(node_list, edge_list, out_file):
-    plt.figure(figsize=(15, 15))
-    plt.axis('off')
+    # plt.figure(figsize=(15, 15))
+    # plt.axis('off')
     G = nx.DiGraph()
     for node in node_list:
         if len(node.parent) == 0:
@@ -88,10 +95,26 @@ def draw_graph(node_list, edge_list, out_file):
     nx.draw_networkx_nodes(G, pos, nodelist=mid_nodes, node_color='blue', node_shape='o', alpha=0.3)
     nx.draw_networkx_nodes(G, pos, nodelist=out_nodes, node_color='purple', node_shape='o', alpha=0.3)
     nx.draw_networkx_edges(G, pos, arrows=True, arrowstyle="->", arrowsize=15, edge_color='black', width=2, alpha='0.5')
+
+
+    graph = nx.drawing.nx_pydot.to_pydot(G)
+
+    nodes = graph.get_nodes()
+    # print(nodes)
+    for node in nodes:
+        node.set_shape('box')
+        # print(node.get_attributes()['Type'])
+        if node.get_attributes()['Type'] == 'in':
+            node.set_color('red')
+        elif node.get_attributes()['Type'] == 'mid':
+            node.set_color('black')
+        elif node.get_attributes()['Type'] == 'out':
+            node.set_color('blue')
+    graph.write_png(out_file + ".png")
     # plt.show()
-    plt.tight_layout()
-    plt.savefig(out_file + ".png", format="PNG", bbox_inches='tight')
-        
+    # plt.tight_layout()
+    # plt.savefig(out_file + ".png", format="PNG", bbox_inches='tight')
+
 
 if __name__ == '__main__':
     import sys
