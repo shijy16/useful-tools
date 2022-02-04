@@ -7,6 +7,7 @@ import json
 
 def get_opened_files(p, postfixs):
     f = p.open_files()
+    print(f)
     files = []
     for postfix in postfixs:
         files += [ x.path for x in f if x.path.endswith(postfix) > 0]
@@ -34,6 +35,8 @@ def save_work_state(fname='work_state.json'):
             if targets[k]['pname'] == p.name():
                 print(p.name())
                 targets[k]['exec'] = p.cmdline()[0]
+                if 'files' in targets[k].keys() and len(targets[k]['files']) > 0:
+                    continue
                 targets[k]['files'] = get_opened_files(p, targets[k]['postfixs'])
     json_str = json.dumps(targets, indent=4, ensure_ascii=False)
     with open(fname, 'w', encoding='utf8') as json_file:
