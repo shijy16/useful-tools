@@ -7,7 +7,7 @@ import json
 
 def get_opened_files(p, postfixs):
     f = p.open_files()
-    print(f)
+    # print(f)
     files = []
     for postfix in postfixs:
         files += [ x.path for x in f if x.path.endswith(postfix) > 0]
@@ -29,18 +29,20 @@ targets['pdf']['postfixs'] = ['.pdf']
 def save_work_state(fname='work_state.json'):
     opened_files = {}
     pids = psutil.pids()
+    for k in targets.keys():
+        targets[k]['files'] = []
     for pid in pids:
         p = psutil.Process(pid)
         for k in targets.keys():
             if targets[k]['pname'] == p.name():
-                print(p.name())
                 targets[k]['exec'] = p.cmdline()[0]
-                if 'files' in targets[k].keys() and len(targets[k]['files']) > 0:
-                    continue
-                targets[k]['files'] = get_opened_files(p, targets[k]['postfixs'])
+                targets[k]['files'] += get_opened_files(p, targets[k]['postfixs'])
+                targets[k]['files'] = list(set(targets[k]['files']))
     json_str = json.dumps(targets, indent=4, ensure_ascii=False)
     with open(fname, 'w', encoding='utf8') as json_file:
         json_file.write(json_str)
+    for k in targets.keys():
+        print(k, targets[k]['files'])
 
 def load_work_state(fname='work_state.json'):
     json_str = None
